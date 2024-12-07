@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/brush_tool"
+        android:title="Brush" />
+    <item
+        android:id="@+id/rectangle_tool"
+        android:title="Rectangle" />
+    <item
+        android:id="@+id/oval_tool"
+        android:title="Oval" />
+    <item
+        android:id="@+id/eraser_tool"
+        android:title="Eraser" />
+    <item
+        android:id="@+id/red_color"
+        android:title="Red" />
+    <item
+        android:id="@+id/green_color"
+        android:title="Green" />
+    <item
+        android:id="@+id/blue_color"
+        android:title="Blue" />
+    <item
+        android:id="@+id/black_color"
+        android:title="Black" />
+</menu>

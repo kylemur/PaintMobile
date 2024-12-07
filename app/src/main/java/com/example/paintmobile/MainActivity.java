@@ -1,8 +1,7 @@
 package com.example.paintmobile;
 
-import static com.example.paintmobile.R.*;
-
 import android.app.Activity;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -27,6 +25,7 @@ public class MainActivity extends Activity {
         paint = new Paint();
         paint.setColor(Color.BLACK);
         paint.setStrokeWidth(5);
+        paint.setStyle(Paint.Style.STROKE); // Set default paint style to stroke
     }
 
     @Override
@@ -40,6 +39,7 @@ public class MainActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.brush_tool:
                 tool = "Brush";
+                paint.setColor(Color.BLACK); // Reset paint color if previously set to white (eraser)
                 return true;
             case R.id.rectangle_tool:
                 tool = "Rectangle";
@@ -69,16 +69,29 @@ public class MainActivity extends Activity {
     }
 
     private class DrawingView extends View {
-        private float startX, startY;
+        private float startX, startY, endX, endY;
+        private Canvas drawCanvas;
+        private Paint canvasPaint;
 
         public DrawingView(MainActivity context) {
             super(context);
             setBackgroundColor(Color.WHITE);
+            canvasPaint = new Paint(Paint.DITHER_FLAG); // Smooth canvas drawing
         }
 
         @Override
-        protected void onDraw(android.graphics.Canvas canvas) {
+        protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
+
+            if (tool.equals("Brush")) {
+                canvas.drawLine(startX, startY, endX, endY, paint);
+                startX = endX; // Update start coordinates to create continuous drawing effect
+                startY = endY;
+            } else if (tool.equals("Rectangle")) {
+                canvas.drawRect(startX, startY, endX, endY, paint);
+            } else if (tool.equals("Oval")) {
+                canvas.drawOval(startX, startY, endX, endY, paint);
+            }
         }
 
         @Override
@@ -93,13 +106,15 @@ public class MainActivity extends Activity {
                     break;
                 case MotionEvent.ACTION_MOVE:
                     if (tool.equals("Brush")) {
+                        endX = x;
+                        endY = y;
                         invalidate();
                     }
                     break;
                 case MotionEvent.ACTION_UP:
-                    if (tool.equals("Rectangle")) {
-                        invalidate();
-                    } else if (tool.equals("Oval")) {
+                    endX = x;
+                    endY = y;
+                    if (tool.equals("Rectangle") || tool.equals("Oval")) {
                         invalidate();
                     }
                     break;
